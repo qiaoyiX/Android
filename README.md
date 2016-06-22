@@ -1,12 +1,58 @@
-##What is it? <br />
-It is an Android to-do list app. Features include adding an item, editting an item by click and deleting an item by long click. It is also an prerequisition for CodePath Project. <br />
+# Pre-work - TodoList
 
-##What's next? <br />
-1. Storing to-do list with SQLite
-2. Change items from simple strings to a class with description, date and more.
-3. Customize UI to make the app more polished. <br />
+TodoList is an android app that allows building a todo list and basic todo items management functionality including adding new items, editing and deleting an existing item.
 
-##Contribution
-This project is finished by myself independently for several hours. CodePath's turorial is very helpful. (http://courses.codepath.com/snippets/intro_to_android/prework)
+Submitted by: Qiaoyi Xu
 
-![alt tag](https://github.com/qiaoyiX/Android/blob/master/todolist.gif)
+Time spent: 10 hours spent in total
+
+## User Stories
+
+The following **required** functionality is completed:
+
+* [V] User can **successfully add and remove items** from the todo list
+* [V] User can **tap a todo item in the list and bring up an edit screen for the todo item** and then have any changes to the text reflected in the todo list.
+* [V] User can **persist todo items** and retrieve them properly on app restart
+
+The following **optional** features are implemented:
+
+* [ ] Persist the todo items [into SQLite](http://guides.codepath.com/android/Persisting-Data-to-the-Device#sqlite) instead of a text file
+* [ ] Improve style of the todo items in the list [using a custom adapter](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView)
+* [ ] Add support for completion due dates for todo items (and display within listview item)
+* [ ] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
+* [ ] Add support for selecting the priority of each todo item (and display in listview item)
+* [ ] Tweak the style improving the UI / UX, play with colors, images or backgrounds
+
+The following **additional** features are implemented:
+
+* [ ] List anything else that you can get done to improve the app functionality!
+
+## Video Walkthrough 
+
+Here's a walkthrough of implemented user stories:
+
+<img src='https://github.com/qiaoyiX/Android/blob/master/todolist.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
+## Notes
+
+Describe any challenges encountered while building the app.
+The challenge I faces was when I add a dialog for editing to-do list, the program crashed for the editText I set. First, I isolated the problem, which is editText, and then scrached my hair about it. For several hours, I've been trying to fix it, but turned out to be not working. Eventually, I realized the sequence of creating it matters a lot, and was able to fix it.
+
+## License
+
+    Copyright [2016] [Qiaoyi Xu]
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
