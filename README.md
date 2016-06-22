@@ -10,9 +10,9 @@ Time spent: 10 hours spent in total
 
 The following **required** functionality is completed:
 
-* [V] User can **successfully add and remove items** from the todo list
-* [V] User can **tap a todo item in the list and bring up an edit screen for the todo item** and then have any changes to the text reflected in the todo list.
-* [V] User can **persist todo items** and retrieve them properly on app restart
+* [x] User can **successfully add and remove items** from the todo list
+* [x] User can **tap a todo item in the list and bring up an edit screen for the todo item** and then have any changes to the text reflected in the todo list.
+* [x] User can **persist todo items** and retrieve them properly on app restart
 
 The following **optional** features are implemented:
 
@@ -37,7 +37,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Describe any challenges encountered while building the app. < /br>
 The challenge I faces was when I add a dialog for editing to-do list, the program crashed for the editText I set. First, I isolated the problem, which is editText, and then scrached my hair about it. For several hours, I've been trying to fix it, but turned out to be not working. Eventually, I realized the sequence of creating it matters a lot, and was able to fix it.
 
 ## License
