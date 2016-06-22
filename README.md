@@ -37,7 +37,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app. < /br>
+Describe any challenges encountered while building the app. </br>
 The challenge I faces was when I add a dialog for editing to-do list, the program crashed for the editText I set. First, I isolated the problem, which is editText, and then scrached my hair about it. For several hours, I've been trying to fix it, but turned out to be not working. Eventually, I realized the sequence of creating it matters a lot, and was able to fix it.
 
 ## License
