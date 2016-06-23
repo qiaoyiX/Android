@@ -16,16 +16,15 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<String> items;
-    ArrayAdapter<String> itemAdapter;
+    List<Todo> items;
+    ArrayAdapter<Todo> itemAdapter;
     ListView lvItems;
+    private PostsDatabaseHelper postsDatabaseHelper;
+    private static int counter;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -36,14 +35,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        lvItems = (ListView) findViewById(R.id.lvItems);
+
         items = new ArrayList<>();
-        readItems();
-        itemAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
-        lvItems.setAdapter(itemAdapter);
+        postsDatabaseHelper = PostsDatabaseHelper.getInstance(this);
+        items = postsDatabaseHelper.getAllPosts();
+
         if (items.size() == 0) {
-            items.add("Doing grocery");
+            Todo newTodo = new Todo(counter, "Doing grocery");
+            ++counter;
+            items.add(newTodo);
+            System.out.printf("ADDed Doing Grocery/n");
+            postsDatabaseHelper.addPost(newTodo);
         }
+        itemAdapter = new TodoAdapter(MainActivity.this, (ArrayList<Todo>) items);
+        lvItems = (ListView) findViewById(R.id.lvItems);
+        lvItems.setAdapter(itemAdapter);
         setupListViewListener();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -53,9 +59,12 @@ public class MainActivity extends AppCompatActivity {
     public void onAddItem(View v) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = etNewItem.getText().toString();
-        itemAdapter.add(itemText);
+        Todo temp = new Todo(counter, itemText);
+        ++counter;
+        itemAdapter.add(temp);
         etNewItem.setText("");
-        writeItems();
+        System.out.printf("ADDed Doing Grocery/n");
+        postsDatabaseHelper.addPost(temp);
     }
 
     public void setupListViewListener() {
@@ -66,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
                                            View item, int pos, long id) {
                 items.remove(pos);
                 itemAdapter.notifyDataSetChanged();
-                writeItems();
+//                writeItems();
+                postsDatabaseHelper.deleteOneTodoItem(pos);
                 return true;
             }
         });
@@ -75,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position,
                                     long id) {
-                String item = ((TextView) view).getText().toString();
+                String item = ((TextView) view.findViewById(R.id.todo_text)).getText().toString();
                 final View layout = View.inflate(MainActivity.this, R.layout.custom_dialog, null);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
 
@@ -83,14 +93,20 @@ public class MainActivity extends AppCompatActivity {
                 alertDialogBuilder.setTitle("Edit to-do item");
                 final EditText input = (EditText)layout.findViewById(R.id.editTodo);
                 input.setText(item);
+                TextView tv = (TextView)view.findViewById(R.id.todo_id);
+                final int tempid = Integer.parseInt(tv.getText().toString());
+                System.out.printf("onclick %d tempid %d\n", position, tempid);
 
                 alertDialogBuilder
                         .setCancelable(false)
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        items.set(position, input.getText().toString());
+
+                                        Todo temp = new Todo(tempid, input.getText().toString());
+                                        items.set(position, temp);
                                         itemAdapter.notifyDataSetChanged();
+                                        postsDatabaseHelper.addOrUpdateText(temp);
                                     }
                                 })
                         .setNegativeButton("Cancel",
@@ -105,25 +121,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
-        } catch (IOException e) {
-            items = new ArrayList<String>();
-        }
-    }
-
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            FileUtils.writeLines(todoFile, items);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void readItems() {
+//        File filesDir = getFilesDir();
+//        File todoFile = new File(filesDir, "todo.txt");
+//        try {
+//            items = new ArrayList<String>(FileUtils.readLines(todoFile));
+//        } catch (IOException e) {
+//            items = new ArrayList<String>();
+//        }
+//    }
+//
+//    private void writeItems() {
+//        File filesDir = getFilesDir();
+//        File todoFile = new File(filesDir, "todo.txt");
+//        try {
+//            FileUtils.writeLines(todoFile, items);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void onStart() {
