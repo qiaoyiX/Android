@@ -14,8 +14,9 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editTodo"
-        android:text="Edit item here">
+        android:id="@+id/EditDesc"
+        style="@style/LargeBlueFont"
+        android:text="Enter item here.">
     <requestFocus />
     </EditText>
 

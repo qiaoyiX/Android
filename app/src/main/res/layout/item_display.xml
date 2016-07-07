@@ -7,11 +7,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="id"
+        style="@style/LargeBlueFont"
         android:id="@+id/todo_id" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Desc"
+        style="@style/LargeBlueFont"
         android:id="@+id/todo_text" />
 </LinearLayout>

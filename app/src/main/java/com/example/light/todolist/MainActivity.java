@@ -1,9 +1,8 @@
 package com.example.light.todolist;
 
-import android.content.DialogInterface;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,12 +18,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EditTodoFragment.EditTodoFragmentListener{
     List<Todo> items;
     ArrayAdapter<Todo> itemAdapter;
     ListView lvItems;
     private PostsDatabaseHelper postsDatabaseHelper;
+    private static Context context;
     private static int counter;
+    private static int curPos;
+    private static int ItemId;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -34,11 +36,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.context = getApplicationContext();
         setContentView(R.layout.activity_main);
 
         items = new ArrayList<>();
         postsDatabaseHelper = PostsDatabaseHelper.getInstance(this);
         items = postsDatabaseHelper.getAllPosts();
+        curPos = -1;
+        ItemId = -1;
 
         if (items.size() == 0) {
             Todo newTodo = new Todo(counter, "Doing grocery");
@@ -85,61 +90,65 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position,
                                     long id) {
-                String item = ((TextView) view.findViewById(R.id.todo_text)).getText().toString();
-                final View layout = View.inflate(MainActivity.this, R.layout.custom_dialog, null);
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-
-                alertDialogBuilder.setView(layout);
-                alertDialogBuilder.setTitle("Edit to-do item");
-                final EditText input = (EditText)layout.findViewById(R.id.editTodo);
-                input.setText(item);
+                curPos = position;
                 TextView tv = (TextView)view.findViewById(R.id.todo_id);
-                final int tempid = Integer.parseInt(tv.getText().toString());
-                System.out.printf("onclick %d tempid %d\n", position, tempid);
+                ItemId = Integer.parseInt(tv.getText().toString());
 
-                alertDialogBuilder
-                        .setCancelable(false)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-
-                                        Todo temp = new Todo(tempid, input.getText().toString());
-                                        items.set(position, temp);
-                                        itemAdapter.notifyDataSetChanged();
-                                        postsDatabaseHelper.addOrUpdateText(temp);
-                                    }
-                                })
-                        .setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+                String item = ((TextView) view.findViewById(R.id.todo_text)).getText().toString();
+                System.out.println("ItemId is " + ItemId);
+                System.out.println("curPos is " + curPos);
+                showEditDialog(item);
+//                final View layout = View.inflate(MainActivity.this, R.layout.custom_dialog, null);
+//                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+//
+//                alertDialogBuilder.setView(layout);
+//                alertDialogBuilder.setTitle("Edit to-do item");
+//                final EditText input = (EditText)layout.findViewById(R.id.editTodo);
+//                input.setText(item);
+//                TextView tv = (TextView)view.findViewById(R.id.todo_id);
+//                final int tempid = Integer.parseInt(tv.getText().toString());
+//                System.out.printf("onclick %d tempid %d\n", position, tempid);
+//
+//                alertDialogBuilder
+//                        .setCancelable(false)
+//                        .setPositiveButton("OK",
+//                                new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int id) {
+//
+//                                        Todo temp = new Todo(tempid, input.getText().toString());
+//                                        items.set(position, temp);
+//                                        itemAdapter.notifyDataSetChanged();
+//                                        postsDatabaseHelper.addOrUpdateText(temp);
+//                                    }
+//                                })
+//                        .setNegativeButton("Cancel",
+//                                new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int id) {
+//                                        dialog.cancel();
+//                                    }
+//                                });
+//                AlertDialog alertDialog = alertDialogBuilder.create();
+//                alertDialog.show();
             }
         });
     }
 
-//    private void readItems() {
-//        File filesDir = getFilesDir();
-//        File todoFile = new File(filesDir, "todo.txt");
-//        try {
-//            items = new ArrayList<String>(FileUtils.readLines(todoFile));
-//        } catch (IOException e) {
-//            items = new ArrayList<String>();
-//        }
-//    }
-//
-//    private void writeItems() {
-//        File filesDir = getFilesDir();
-//        File todoFile = new File(filesDir, "todo.txt");
-//        try {
-//            FileUtils.writeLines(todoFile, items);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public static Context getAppContext() {
+        return MainActivity.context;
+    }
+
+    public void showEditDialog(String str) {
+        MyAlertDialogFragment editTodoFragment = MyAlertDialogFragment.newInstance(str);
+        editTodoFragment.show(this.getFragmentManager(), str);
+    }
+
+    @Override
+    public void onFinishEditDialog(String inputText) {
+        Todo temp = new Todo(ItemId, inputText);
+        items.set(curPos, temp);
+        itemAdapter.notifyDataSetChanged();
+        postsDatabaseHelper.addOrUpdateText(temp);
+    }
 
     @Override
     public void onStart() {
