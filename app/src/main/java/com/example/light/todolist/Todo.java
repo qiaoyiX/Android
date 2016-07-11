@@ -8,10 +8,19 @@ import java.util.Date;
 public class Todo {
     int id;
     String text;
+    Boolean isCompleted;
     Date date;
     Todo () {}
     Todo (int id, String text) {
         this.id = id;
         this.text = text;
+        isCompleted = false;
     }
+
+    Todo (int id, String text, Boolean isChecked) {
+        this.id = id;
+        this.text = text;
+        this.isCompleted = isChecked;
+    }
+
 }

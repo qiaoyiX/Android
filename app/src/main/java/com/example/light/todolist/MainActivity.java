@@ -49,12 +49,19 @@ public class MainActivity extends AppCompatActivity implements EditTodoFragment.
             Todo newTodo = new Todo(counter, "Doing grocery");
             ++counter;
             items.add(newTodo);
-            System.out.printf("ADDed Doing Grocery/n");
             postsDatabaseHelper.addPost(newTodo);
         }
-        itemAdapter = new TodoAdapter(MainActivity.this, (ArrayList<Todo>) items);
+        itemAdapter = new TodoAdapter(MainActivity.this, (ArrayList<Todo>) items, new mClickListener() {
+            @Override
+            public void onCheckChanged(int position) {
+                Todo temp = items.get(position);
+                temp.isCompleted = !temp.isCompleted;
+                postsDatabaseHelper.addOrUpdateText(temp);
+            }
+        });
         lvItems = (ListView) findViewById(R.id.lvItems);
         lvItems.setAdapter(itemAdapter);
+        lvItems.setItemsCanFocus(true);
         setupListViewListener();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -68,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements EditTodoFragment.
         ++counter;
         itemAdapter.add(temp);
         etNewItem.setText("");
-        System.out.printf("ADDed Doing Grocery/n");
         postsDatabaseHelper.addPost(temp);
     }
 
@@ -78,9 +84,9 @@ public class MainActivity extends AppCompatActivity implements EditTodoFragment.
             @Override
             public boolean onItemLongClick(AdapterView<?> adapter,
                                            View item, int pos, long id) {
+                System.out.printf("on long click pos %d id %d/n", pos, id);
                 items.remove(pos);
                 itemAdapter.notifyDataSetChanged();
-//                writeItems();
                 postsDatabaseHelper.deleteOneTodoItem(pos);
                 return true;
             }
@@ -93,44 +99,11 @@ public class MainActivity extends AppCompatActivity implements EditTodoFragment.
                 curPos = position;
                 TextView tv = (TextView)view.findViewById(R.id.todo_id);
                 ItemId = Integer.parseInt(tv.getText().toString());
-
                 String item = ((TextView) view.findViewById(R.id.todo_text)).getText().toString();
-                System.out.println("ItemId is " + ItemId);
-                System.out.println("curPos is " + curPos);
                 showEditDialog(item);
-//                final View layout = View.inflate(MainActivity.this, R.layout.custom_dialog, null);
-//                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-//
-//                alertDialogBuilder.setView(layout);
-//                alertDialogBuilder.setTitle("Edit to-do item");
-//                final EditText input = (EditText)layout.findViewById(R.id.editTodo);
-//                input.setText(item);
-//                TextView tv = (TextView)view.findViewById(R.id.todo_id);
-//                final int tempid = Integer.parseInt(tv.getText().toString());
-//                System.out.printf("onclick %d tempid %d\n", position, tempid);
-//
-//                alertDialogBuilder
-//                        .setCancelable(false)
-//                        .setPositiveButton("OK",
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//
-//                                        Todo temp = new Todo(tempid, input.getText().toString());
-//                                        items.set(position, temp);
-//                                        itemAdapter.notifyDataSetChanged();
-//                                        postsDatabaseHelper.addOrUpdateText(temp);
-//                                    }
-//                                })
-//                        .setNegativeButton("Cancel",
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//                                    }
-//                                });
-//                AlertDialog alertDialog = alertDialogBuilder.create();
-//                alertDialog.show();
             }
         });
+
     }
 
     public static Context getAppContext() {

@@ -18,7 +18,7 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
     final String TAG = "post db";
     private static PostsDatabaseHelper sInstance;
     private static final String DATABASE_NAME = "postsDatabase";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static synchronized PostsDatabaseHelper getInstance(Context context) {
         // Use the application context, which will ensure that you
@@ -43,6 +43,7 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_POST_ID = "id";
 //    private static final String KEY_POST_USER_ID_FK = "userId";
     private static final String KEY_POST_TEXT = "text";
+    private static final String KEY_POST_COMPLETE = "isCompleted";
 
     // User Table Columns
 //    private static final String KEY_USER_ID = "id";
@@ -67,6 +68,7 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 //            values.put(KEY_POST_USER_ID_FK, userId);
             values.put(KEY_POST_TEXT, todo.text);
+            values.put(KEY_POST_COMPLETE, todo.isCompleted == true ? "1" : "0");
 
             // Notice how we haven't specified the primary key. SQLite auto increments the primary key column.
             db.insertOrThrow(TABLE_POSTS, null, values);
@@ -92,22 +94,29 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
         // The database connection is cached so it's not expensive to call getWriteableDatabase() multiple times.
         SQLiteDatabase db = getWritableDatabase();
         long userId = -1;
+        System.out.println("Hello");
 
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_POST_ID, todo.id);
             values.put(KEY_POST_TEXT, todo.text);
+            values.put(KEY_POST_COMPLETE, todo.isCompleted == true ? "1" : "0");
 
             // First try to update the user in case the user already exists in the database
             // This assumes userNames are unique
+            System.out.println(todo.id);
             int rows = db.update(TABLE_POSTS, values, KEY_POST_ID + "= ?", new String[]{Integer.toString(todo.id)});
             // Check if update succeeded
+            System.out.println(rows + "is rows");
             if (rows == 1) {
                 // Get the primary key of the user we just updated
                 String usersSelectQuery = String.format("SELECT %s FROM %s WHERE %s = ?",
-                        TABLE_POSTS, KEY_POST_ID, todo.text);
+                        KEY_POST_ID, TABLE_POSTS , KEY_POST_TEXT);
                 Cursor cursor = db.rawQuery(usersSelectQuery, new String[]{String.valueOf(todo.text)});
+//                String usersSelectQuery = String.format("SELECT %s FROM %s WHERE %s = ?",
+//                        TABLE_POSTS, KEY_POST_ID, todo.text);
+//                Cursor cursor = db.rawQuery(usersSelectQuery, new String[]{String.valueOf(todo.text)});
                 try {
                     if (cursor.moveToFirst()) {
                         userId = cursor.getInt(0);
@@ -136,8 +145,7 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
 
         // SELECT * FROM POSTS
         String POSTS_SELECT_QUERY =
-                String.format("SELECT * FROM %s",
-                        TABLE_POSTS);
+                String.format("SELECT * FROM %s", TABLE_POSTS);
 
         // "getReadableDatabase()" and "getWriteableDatabase()" return the same object (except under low
         // disk space scenarios)
@@ -149,6 +157,9 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
                     Todo newTodo = new Todo();
                     newTodo.text = cursor.getString(cursor.getColumnIndex(KEY_POST_TEXT));
                     newTodo.id = cursor.getInt(cursor.getColumnIndex(KEY_POST_ID));
+                    int comp = cursor.getInt(cursor.getColumnIndex(KEY_POST_COMPLETE));
+                    newTodo.isCompleted = comp == 1 ? true : false;
+                    //newTodo.isCompleted = Boolean.valueOf(cursor.getColumnIndex(KEY_POST_COMPLETE));
                     posts.add(newTodo);
                 } while(cursor.moveToNext());
             }
@@ -188,22 +199,15 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
     // If a database already exists on disk with the same DATABASE_NAME, this method will NOT be called.
     @Override
     public void onCreate(SQLiteDatabase db) {
+        System.out.println("onCreate!");
         String CREATE_POSTS_TABLE = "CREATE TABLE " + TABLE_POSTS +
                 "(" +
-                KEY_POST_ID + " INTEGER PRIMARY KEY," + // Define a primary key
+                KEY_POST_ID + " INTEGER PRIMARY KEY, " + // Define a primary key
                 //KEY_POST_USER_ID_FK + " INTEGER REFERENCES " + TABLE_USERS + "," + // Define a foreign key
-                KEY_POST_TEXT + " TEXT" +
-                ")";
-
-//        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS +
-//                "(" +
-//                KEY_USER_ID + " INTEGER PRIMARY KEY," +
-//                KEY_USER_NAME + " TEXT," +
-//                KEY_USER_PROFILE_PICTURE_URL + " TEXT" +
-//                ")";
-
+                KEY_POST_TEXT + " TEXT, " +
+                KEY_POST_COMPLETE + " INTEGER " +
+                ");";
         db.execSQL(CREATE_POSTS_TABLE);
-//        db.execSQL(CREATE_USERS_TABLE);
     }
 
     // Called when the database needs to be upgraded.
@@ -214,7 +218,6 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion != newVersion) {
             // Simplest implementation is to drop all old tables and recreate them
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTS);
-//            db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
             onCreate(db);
         }
     }

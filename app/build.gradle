@@ -26,4 +26,5 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
 
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.code-troopers.betterpickers:library:3.0.0'
 }

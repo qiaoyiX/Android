@@ -4,7 +4,7 @@ TodoList is an android app that allows building a todo list and basic todo items
 
 Submitted by: Qiaoyi Xu
 
-Time spent: 8 hours spent in total
+Time spent: 12 hours spent in total
 
 ## User Stories
 
@@ -21,11 +21,12 @@ The following **optional** features are implemented:
 * [ ] Add support for completion due dates for todo items (and display within listview item)
 * [x] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
 * [ ] Add support for selecting the priority of each todo item (and display in listview item)
-* [ ] Tweak the style improving the UI / UX, play with colors, images or backgrounds
+* [x] Tweak the style improving the UI / UX, play with colors, images or backgrounds 
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [x] List anything else that you can get done to improve the app functionality!
+Added status of to-dos by adding checkbox. Now status can be modified by clicking checkboxes.
 
 ## Video Walkthrough 
 
