@@ -32,9 +32,9 @@ Added status of to-dos by adding checkbox. Now status can be modified by clickin
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://github.com/qiaoyiX/Android/blob/master/todolist_new.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/qiaoyiX/Android/blob/master/todolist_demo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
+GIF created with [LiceCap](http://www.cockos.com/licecap/). 
 
 ## Notes
 
